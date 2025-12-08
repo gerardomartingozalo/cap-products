@@ -13,9 +13,10 @@ type Address {
 
 type Dec  : Decimal(16, 2);
 
+//Association Unmanaged
 entity Products {
     key ID               : UUID;
-        Name             : String not NULL;
+        Name             : String not null;
         Description      : String;
         ImageUrl         : String;
         ReleaseDate      : DateTime default $now;
@@ -25,7 +26,37 @@ entity Products {
         Width            : Decimal(16, 2);
         Depth            : Decimal(16, 2);
         Quantity         : Decimal(16, 2);
-}
+        Supplier         : Association to Suppliers;
+        UnitOfMeasure    : Association to UnitOfMeasures;
+        Currency         : Association to Currencies;
+        DimensionUnit    : Association to DimensionUnits;
+        Category         : Association to Categories;
+        SalesData        : Association to many SalesData
+                               on SalesData.Product = $self;
+        ProductReviews          : Association to many ProductReviews
+                               on ProductReviews.Product = $self;
+};
+
+//association Manage
+// entity Products {
+//     key ID               : UUID;
+//         Name             : String not null;
+//         Description      : String;
+//         ImageUrl         : String;
+//         ReleaseDate      : DateTime default $now;
+//         DiscontinuedDate : DateTime;
+//         Price            : Dec;
+//         Height           : type of Price;
+//         Width            : Decimal(16, 2);
+//         Depth            : Decimal(16, 2);
+//         Quantity         : Decimal(16, 2);
+//         Supplier_Id      : UUID;
+//         ToSupplier       : Association to one Suppliers
+//                                on ToSupplier.ID = Supplier_Id;
+//         UnitOfMeasure_Id : String(2);
+//         ToUnitOfMeasure  : Association to UnitOfMeasures
+//                                on ToUnitOfMeasure.ID = UnitOfMeasure_Id;
+// }
 
 entity Suppliers {
     key ID      : UUID;
@@ -34,6 +65,8 @@ entity Suppliers {
         Email   : String;
         Phone   : String;
         Fax     : String;
+        Product : Association to many Products
+                      on Product.Supplier = $self;
 }
 
 entity Categories {
@@ -68,18 +101,22 @@ entity Months {
 }
 
 entity ProductReviews {
-    key ID           : UUID;
-    key ToProduct_Id : UUID;
-        CreatedAt    : DateTime;
-        name         : String;
-        rating       : Integer;
-        comment      : String;
+    key ID        : UUID;
+        Product   : Association to Products;
+        CreatedAt : DateTime;
+        Name      : String;
+        Rating    : Integer;
+        Comment   : String;
+
 }
 
 entity SalesData {
-    key ID           : UUID;
-        DeliveryDate : DateTime;
-        Revenue      : Decimal(16, 2);
+    key ID            : UUID;
+        DeliveryDate  : DateTime;
+        Revenue       : Decimal(16, 2);
+        Product       : Association to Products;
+        Currency      : Association to Currencies;
+        DeliveryMonth : Association to Months;
 }
 
 
@@ -130,3 +167,63 @@ entity SalesData {
 //         @Core.Computed: false
 //         virtual dicount_2 : Decimal;
 // }
+
+entity SelProducts   as select from Products;
+
+entity SelProducts1  as
+    select from Products {
+        *
+    };
+
+
+entity SelProducts2  as
+    select from Products {
+        Name,
+        Price,
+        Quantity
+    };
+
+entity SelProducts3  as
+    select from Products
+    left join ProductReviews
+        on Products.Name = ProductReviews.Name
+    {
+        Rating,
+        Products.Name,
+        sum(Price) as TotalPrice
+    }
+    group by
+        Rating,
+        Products.Name
+    order by
+        Rating;
+
+
+entity ProjProducts  as projection on Products;
+
+entity ProjProducts2 as
+    projection on Products {
+        *
+    };
+
+entity ProjProducts3 as
+    projection on Products {
+        ReleaseDate,
+        Name
+    };
+
+
+// entity ParamProducts(pName : String) as
+//     select from Products {
+//         Name, Price, Quantity
+//     } where Name = :pName;
+
+// entity ProjParamProducts(pName : String) as
+//     projection on Products
+//     where Name = :pName;
+
+
+extend Products with {
+    PriceCondition     : String(2);
+    PriceDetermination : String(3);
+};
