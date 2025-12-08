@@ -227,3 +227,52 @@ extend Products with {
     PriceCondition     : String(2);
     PriceDetermination : String(3);
 };
+
+
+entity Course {
+    key ID : UUID;
+    Student: Association to many StudentCourse
+             on Student.Course = $self;
+}
+
+entity Student {
+    key ID : UUID;
+    Course : Association to many StudentCourse
+             on Course.Student = $self;
+}
+
+entity StudentCourse {
+    key ID      : UUID;
+    Student : Association to Student;
+    Course  : Association to Course;
+}
+
+
+entity Orders {
+    key ID       : UUID;
+        Date     : Date;
+        Customer : String;
+        Item     : Composition of many OrderItems
+                   on Item.Order = $self;
+}
+
+// entity Orders {
+//     key ID       : UUID;
+//         Date     : Date;
+//         Customer : String;
+//         //Item     : Composition of many OrderItems
+//         //                on Item.Order = $self;
+//         Item     : Composition of many {
+//             key Position : UUID;
+//                 Order    : Association to Orders;
+//                 Product  : Association to Products;
+//                 Quantity : Integer;
+//         }
+// };
+
+entity OrderItems {
+    key ID       : UUID;
+        Order    : Association to Orders;
+        Product  : Association to Products;
+        Quantity : Integer;
+}
