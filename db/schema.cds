@@ -1,5 +1,6 @@
 namespace com.logali;
 
+using { cuid, managed } from '@sap/cds/common';
 
 type Name : String(50);
 
@@ -14,10 +15,10 @@ type Address {
 type Dec  : Decimal(16, 2);
 
 //Association Unmanaged
-entity Products {
-    key ID               : UUID;
-        Name             : String not null;
-        Description      : String;
+entity Products: cuid, managed {
+    //key ID               : UUID;
+        Name             : localized String not null ;
+        Description      : localized String;
         ImageUrl         : String;
         ReleaseDate      : DateTime default $now;
         DiscontinuedDate : DateTime;
@@ -58,9 +59,9 @@ entity Products {
 //                                on ToUnitOfMeasure.ID = UnitOfMeasure_Id;
 // }
 
-entity Suppliers {
-    key ID      : UUID;
-        Name    : type of Products : Name;
+entity Suppliers: cuid {
+    //key ID      : UUID;
+        Name    : localized String not null ;
         Address : Address;
         Email   : String;
         Phone   : String;
@@ -69,39 +70,40 @@ entity Suppliers {
                       on Product.Supplier = $self;
 }
 
-entity Categories {
-    key ID   : String(1);
-        Name : String;
+entity Categories: cuid {
+    //key ID   : String(1);
+        Name : localized String;
+        Product : Association to Products;
 }
 
-entity StockAvailability {
-    key ID          : Integer;
-        Description : String;
+entity StockAvailability: cuid {
+    //key ID          : Integer;
+        Description : localized String;
 }
 
 entity Currencies {
     key ID          : String(3);
-        Description : String;
+        Description : localized String;
 }
 
-entity UnitOfMeasures {
-    key ID          : String(2);
-        Description : String;
+entity UnitOfMeasures: cuid {
+    //key ID          : String(2);
+        Description : localized String;
 }
 
-entity DimensionUnits {
-    key ID          : String(2);
-        Description : String;
+entity DimensionUnits: cuid {
+    //key ID          : String(2);
+        Description : localized String;
 }
 
-entity Months {
-    key ID               : String(2);
-        Description      : String;
-        ShortDescription : String(3);
+entity Months: cuid {
+    //key ID               : String(2);
+        Description      : localized String;
+        ShortDescription : localized String(3);
 }
 
-entity ProductReviews {
-    key ID        : UUID;
+entity ProductReviews: cuid {
+    //key ID        : UUID;
         Product   : Association to Products;
         CreatedAt : DateTime;
         Name      : String;
@@ -110,8 +112,8 @@ entity ProductReviews {
 
 }
 
-entity SalesData {
-    key ID            : UUID;
+entity SalesData: cuid {
+    //key ID            : UUID;
         DeliveryDate  : DateTime;
         Revenue       : Decimal(16, 2);
         Product       : Association to Products;
@@ -229,27 +231,27 @@ extend Products with {
 };
 
 
-entity Course {
-    key ID : UUID;
+entity Course: cuid {
+    //key ID : UUID;
     Student: Association to many StudentCourse
              on Student.Course = $self;
 }
 
-entity Student {
-    key ID : UUID;
+entity Student: cuid {
+    //key ID : UUID;
     Course : Association to many StudentCourse
              on Course.Student = $self;
 }
 
-entity StudentCourse {
-    key ID      : UUID;
+entity StudentCourse: cuid {
+    //key ID      : UUID;
     Student : Association to Student;
     Course  : Association to Course;
 }
 
 
-entity Orders {
-    key ID       : UUID;
+entity Orders: cuid {
+    //key ID       : UUID;
         Date     : Date;
         Customer : String;
         Item     : Composition of many OrderItems
@@ -270,8 +272,8 @@ entity Orders {
 //         }
 // };
 
-entity OrderItems {
-    key ID       : UUID;
+entity OrderItems: cuid {
+    //key ID       : UUID;
         Order    : Association to Orders;
         Product  : Association to Products;
         Quantity : Integer;
