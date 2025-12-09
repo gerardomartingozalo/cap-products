@@ -17,7 +17,7 @@ CREATE TABLE com_logali_Products (
   Quantity DECIMAL(16, 2),
   Supplier_ID NVARCHAR(36),
   UnitOfMeasure_ID NVARCHAR(36),
-  Currency_ID NVARCHAR(36),
+  Currency_ID NVARCHAR(3),
   DimensionUnit_ID NVARCHAR(36),
   Category_ID NVARCHAR(36),
   PriceCondition NVARCHAR(2),
@@ -39,6 +39,13 @@ CREATE TABLE com_logali_Suppliers (
   PRIMARY KEY(ID)
 );
 
+CREATE TABLE com_logali_Suppliers_texts (
+  locale NVARCHAR(14) NOT NULL,
+  ID NVARCHAR(36) NOT NULL,
+  Name NVARCHAR(255) NOT NULL,
+  PRIMARY KEY(locale, ID)
+);
+
 CREATE TABLE com_logali_UnitOfMeasures (
   ID NVARCHAR(36) NOT NULL,
   Description NVARCHAR(255),
@@ -53,14 +60,14 @@ CREATE TABLE com_logali_UnitOfMeasures_texts (
 );
 
 CREATE TABLE com_logali_Currencies (
-  ID NVARCHAR(36) NOT NULL,
+  ID NVARCHAR(3) NOT NULL,
   Description NVARCHAR(255),
   PRIMARY KEY(ID)
 );
 
 CREATE TABLE com_logali_Currencies_texts (
   locale NVARCHAR(14) NOT NULL,
-  ID NVARCHAR(36) NOT NULL,
+  ID NVARCHAR(3) NOT NULL,
   Description NVARCHAR(255),
   PRIMARY KEY(locale, ID)
 );
@@ -97,7 +104,7 @@ CREATE TABLE com_logali_SalesData (
   DeliveryDate DATETIME_TEXT,
   Revenue DECIMAL(16, 2),
   Product_ID NVARCHAR(36),
-  Currency_ID NVARCHAR(36),
+  Currency_ID NVARCHAR(3),
   DeliveryMonth_ID NVARCHAR(36),
   PRIMARY KEY(ID)
 );
@@ -178,13 +185,6 @@ CREATE TABLE com_logali_OrderItems (
   Product_ID NVARCHAR(36),
   Quantity INTEGER,
   PRIMARY KEY(ID)
-);
-
-CREATE TABLE com_logali_Suppliers_texts (
-  locale NVARCHAR(14) NOT NULL,
-  ID NVARCHAR(36) NOT NULL,
-  Name NVARCHAR(255) NOT NULL,
-  PRIMARY KEY(locale, ID)
 );
 
 CREATE VIEW com_logali_SelProducts AS SELECT

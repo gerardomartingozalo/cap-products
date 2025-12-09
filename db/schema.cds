@@ -81,8 +81,8 @@ entity StockAvailability: cuid {
         Description : localized String;
 }
 
-entity Currencies {
-    key ID          : String(3);
+entity Currencies  {
+     key ID         : String(3);
         Description : localized String;
 }
 

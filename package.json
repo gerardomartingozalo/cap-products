@@ -12,10 +12,5 @@
   "scripts": {
     "start": "cds watch"
   },
-  "cds": {
-    "i18n": {
-      "for_sqlite": ["en", "de", "es"]
-    }
- },
   "private": true
 }
