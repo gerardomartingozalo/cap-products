@@ -1,0 +1,17 @@
+### GET Orders plurar
+
+GET http://localhost:4004/odata/v4/manage-orders/GetOrders
+
+### GET Order singular
+GET http://localhost:4004/odata/v4/manage-orders/GetOrders('client1@client1.com')
+
+### Create Order
+POST http://localhost:4004/odata/v4/manage-orders/CreateOrder HTTP/1.1
+Content-Type: application/json
+
+{
+    "ClientEmail": "client5@client6.com",
+    "FirstName": "Lorena",
+    "LastName": "Garcia",
+    "CreatedOn": "2024-10-10"
+}

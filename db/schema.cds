@@ -21,7 +21,7 @@ context materials {
 
     //Association Unmanaged
     entity Products : cuid, managed {
-        //key ID               : UUID;
+        key ID               : UUID;
         Name             : localized String not null;
         Description      : localized String;
         ImageUrl         : String;
@@ -42,6 +42,7 @@ context materials {
         Reviews          : Association to many ProductReview
                                on Reviews.Product = $self;
     };
+
 
     extend Products with {
         PriceCondition     : String(2);
@@ -103,10 +104,10 @@ context materials {
 
     entity ProductReview : cuid, managed {
         //key ID        : UUID;
-        Name      : String;
-        Rating    : Integer;
-        Comment   : String;
-        Product   : Association to Products;
+        Name    : String;
+        Rating  : Integer;
+        Comment : String;
+        Product : Association to Products;
     }
 }
 
@@ -216,4 +217,35 @@ context sales {
 // entity ProjParamProducts(pName : String) as
 //     projection on Products
 //     where Name = :pName;
+}
+
+context reports {
+
+    entity AverageRating as
+        select from logali.materials.ProductReview {
+            Product.ID  as ProductId,
+            avg(Rating) as AverageRating : Decimal(16, 2)
+        }
+        group by
+            Product.ID;
+
+
+entity Products as
+    select from logali.materials.Products
+    mixin {
+        ToStockAvailability : Association to logali.materials.StockAvailability
+            on ToStockAvailability.ID = $projection.StockAvailability;  // ✅
+        ToAverageRating : Association to AverageRating
+            on ToAverageRating.ProductId = ID;
+    }
+    into {
+        *,
+        ToAverageRating.AverageRating as Rating,
+        case
+            when Quantity >= 8 then 3
+            when Quantity > 0  then 2
+            else 1
+        end as StockAvailability : Integer,  // ✅ CAMBIO: Availability (con "a")
+        ToStockAvailability                   // ✅ Correcto
+    };
 }

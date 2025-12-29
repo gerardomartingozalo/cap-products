@@ -19,30 +19,63 @@ using {com.training as training} from '../db/training';
 // }
 
 service CatalogService {
+
+    //entity Products          as
+    //select from logali.materials.Products {
+    // ID,
+    // Name          as ProductName     @mandatory,
+    // Description                      @mandatory,
+    // ImageUrl,
+    // ReleaseDate,
+    // DiscontinuedDate,
+    // Price                            @mandatory,
+    // Height,
+    // Width,
+    // Depth,
+    //*,
+    //Quantity,
+    //UnitOfMeasure as ToUnitOfMeasure @mandatory,
+    //Currency      as ToCurrency      @mandatory,
+    //Category      as ToCategory      @mandatory,
+    //Category.Name as CategoryName    @readonly,
+    //DimensionUnit as ToDimensionUnit,
+    //SalesData,
+    //Supplier,
+    //Reviews
+    //};
+
+
     entity Products          as
-        select from logali.materials.Products {
-            // ID,
-            // Name          as ProductName     @mandatory,
-            // Description                      @mandatory,
-            // ImageUrl,
-            // ReleaseDate,
-            // DiscontinuedDate,
-            // Price                            @mandatory,
-            // Height,
-            // Width,
-            // Depth,
-            *,
-            Quantity,
+        select from logali.reports.Products {
+            ID,
+            Name          as ProductName     @mandatory,
+            Description                      @mandatory,
+            ImageUrl,
+            ReleaseDate,
+            DiscontinuedDate,
+            Price                            @mandatory,
+            Height,
+            Width,
+            Depth,
+            Quantity                         @(
+                mandatory,
+                assert.range: [
+                    0.00,
+                    20.00
+                ]
+            ),
             UnitOfMeasure as ToUnitOfMeasure @mandatory,
             Currency      as ToCurrency      @mandatory,
             Category      as ToCategory      @mandatory,
-            Category.Name as CategoryName    @readonly,
+            Category.Name as Category        @readonly,
             DimensionUnit as ToDimensionUnit,
             SalesData,
             Supplier,
-            Reviews
-        };
-
+            Reviews,
+            Rating, 
+            StockAvailability,
+            ToStockAvailability
+        }
 
     @readonly
     entity Supplier          as
@@ -128,13 +161,15 @@ define service MyService {
 
     entity SuppliersProduct as
         select from logali.materials.Products[Name = 'Bread']{
-        *,
-        Name,
-        Description,
-        Supplier.Address
-    } where Supplier.Address.PostalCode = 98074;
+            *,
+            Name,
+            Description,
+            Supplier.Address
+        }
+        where
+            Supplier.Address.PostalCode = 98074;
 
-    entity SupliersToSales as
+    entity SupliersToSales  as
         select
             Supplier.Email,
             Category.Name,
@@ -142,5 +177,38 @@ define service MyService {
             SalesData.Currency.Description
         from logali.materials.Products;
 
+
+    entity EntityInfix      as
+        select Supplier[Name = 'Exotic Liquids'].Phone from logali.materials.Products
+        where
+            Products.Name = 'Bread';
+
+    entity EntityJoin       as
+        select Phone from logali.materials.Products
+        left join logali.sales.Suppliers as supp
+            on (
+                supp.ID   = Products.Supplier.ID
+            )
+            and supp.Name = 'Exotic Liquids'
+        where
+            Products.Name = 'Bread';
+
+
 }
 
+define service Reports {
+    entity AverageRating  as projection on logali.reports.AverageRating;
+
+    entity EntityCasting as
+    select
+        cast (Price as Integer) as Price,
+        Price as Price2 : Integer
+    from logali.materials.Products;
+
+
+    entity EntityExists as
+    select from logali.materials.Products {
+        Name
+    } where exists Supplier[Name = 'Exotic Liquids'];
+    
+}
