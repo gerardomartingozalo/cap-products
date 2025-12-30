@@ -1,16 +1,23 @@
 {
   "name": "products",
   "version": "1.0.0",
-  "description": "A simple CAP project.",
   "dependencies": {
     "@sap/cds": "^9",
     "express": "^4"
   },
-  "devDependencies": {
-    "@cap-js/sqlite": "^2"
-  },
   "scripts": {
-    "start": "cds watch"
+    "start": "cds-serve"
   },
-  "private": true
+  "cds": {
+    "requires": {
+      "sapbackend": {
+        "kind": "odata-v2",
+        "model": "srv/external/sapbackend",
+        "credentials": {
+          "url": "http://erp13.sap4practice.com:9037/sap/opu/odata/sap/YSAPUI5_SRV_01/",
+          "authentication": "NoAuthentication"
+        }
+      }
+    }
+  }
 }
