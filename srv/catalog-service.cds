@@ -18,7 +18,10 @@ using {com.training as training} from '../db/training';
 //     entity OrderItems      as projection on logali.sales.OrderItems;
 // }
 
-@protocol: ['odata', 'graphql']
+@protocol: [
+    'odata',
+    'graphql'
+]
 service CatalogService {
 
     //entity Products          as
@@ -67,13 +70,15 @@ service CatalogService {
             ),
             UnitOfMeasure as ToUnitOfMeasure @mandatory,
             Currency      as ToCurrency      @mandatory,
+            Currency.ID   as CurrencyId,
             Category      as ToCategory      @mandatory,
+            Category.ID   as CategoryId,
             Category.Name as Category        @readonly,
             DimensionUnit as ToDimensionUnit,
             SalesData,
             Supplier,
             Reviews,
-            Rating, 
+            Rating,
             StockAvailability,
             ToStockAvailability
         }
@@ -198,18 +203,22 @@ define service MyService {
 }
 
 define service Reports {
-    entity AverageRating  as projection on logali.reports.AverageRating;
+    entity AverageRating as projection on logali.reports.AverageRating;
 
     entity EntityCasting as
-    select
-        cast (Price as Integer) as Price,
-        Price as Price2 : Integer
-    from logali.materials.Products;
+        select
+            cast(
+                Price as Integer
+            )     as Price,
+            Price as Price2 : Integer
+        from logali.materials.Products;
 
 
-    entity EntityExists as
-    select from logali.materials.Products {
-        Name
-    } where exists Supplier[Name = 'Exotic Liquids'];
-    
+    entity EntityExists  as
+        select from logali.materials.Products {
+            Name
+        }
+        where
+            exists Supplier[Name = 'Exotic Liquids'];
+
 }
