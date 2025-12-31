@@ -1,4 +1,4 @@
-const cds = require("@sap/cds");
+//const cds = require("@sap/cds");
 
 //module.exports = cds.service.impl(async function() {
 //  const { Incidents } = this.entities;
@@ -14,6 +14,17 @@ const cds = require("@sap/cds");
 //  });
 //});
 
+
+//const cds = require("@sap/cds");
+
+//module.exports = cds.service.impl(async function() {
+//  const { Incidents } = this.entities;
+//  const sapbackend = await cds.connect.to("sapbackend");
+
+//  this.on("READ", Incidents, async (req) => {
+//    return await sapbackend.tx(req).run(req.query);
+//  });
+//});
 
 module.exports = async (srv) => {
     const sapbackend = await cds.connect.to("sapbackend");
@@ -34,7 +45,7 @@ module.exports = async (srv) => {
         let incident = await sapbackend.tx(req).send({
             query: IncidentsQuery,
             headers: {
-                Authorization: "Basic c2FwdWk1OnNhcHVpNQ==",
+                Authorization: `${process.env.SAP_GATEWAY_AUTH}`,
             },
         });
 

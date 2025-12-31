@@ -18,6 +18,7 @@ using {com.training as training} from '../db/training';
 //     entity OrderItems      as projection on logali.sales.OrderItems;
 // }
 
+@protocol: ['odata', 'graphql']
 service CatalogService {
 
     //entity Products          as

@@ -69,14 +69,14 @@ context materials {
     //                                on ToUnitOfMeasure.ID = UnitOfMeasure_Id;
     // }
 
-    entity Categories : cuid {
-        //key ID   : String(1);
+    entity Categories  {
+        key ID   : String(1);
         Name    : localized String;
         Product : Association to Products;
     }
 
-    entity StockAvailability : cuid {
-        //key ID          : Integer;
+    entity StockAvailability  {
+        key ID          : Integer;
         Description : localized String;
         Product     : Association to Products;
     }
